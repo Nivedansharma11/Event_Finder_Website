@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delegate — Find enterprise events worth attending</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --bg: #09090b; 
+      --bg-elev: rgba(24, 24, 27, 0.7);
+      --bg-elev-2: #1f1f22;
+      --ink: #f8fafc;
+      --muted: #a1a1aa;
+      --muted-2: #71717a;
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(255, 255, 255, 0.15);
+      
+      --gold: #D4AF37; 
+      --gold-soft: #f3e5ab;
+      --gold-glow: rgba(212, 175, 55, 0.15);
+    }
+    
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    
+    /* Subtle background grid pattern for premium tech feel */
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: 'Inter', sans-serif; line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      background-image: 
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 60px 60px;
+      background-attachment: fixed;
+    }
+    
+    a { color: inherit; text-decoration: none; }
+    h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; font-weight: 400; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 6vw; position: relative; z-index: 2; }
+    button, select, input { font-family: inherit; cursor: pointer; }
+
+    /* Animations */
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+      50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.4); }
+      100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); }
+    }
+    @keyframes pulseBtn {
+      0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+    }
+    @keyframes marqueeText {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes ambientPan {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+    @keyframes mapPan {
+      0% { background-position: 0 0; }
+      100% { background-position: 60px 60px; }
+    }
+    @keyframes radarSweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Crazy Spotlight Animations */
+    @keyframes extremeFloat {
+      0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); }
+      25% { transform: translateY(-15px) rotateX(4deg) rotateY(-4deg); }
+      50% { transform: translateY(0) rotateX(0) rotateY(0); }
+      75% { transform: translateY(15px) rotateX(-4deg) rotateY(4deg); }
+    }
+    @keyframes rainbowBorder {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes hyperPulse {
+      0% { box-shadow: 0 0 20px rgba(212,175,55,0.2), 0 0 60px rgba(212,175,55,0.2); }
+      50% { box-shadow: 0 0 40px rgba(212,175,55,0.6), 0 0 100px rgba(212,175,55,0.4), inset 0 0 20px rgba(212,175,55,0.3); }
+      100% { box-shadow: 0 0 20px rgba(212,175,55,0.2), 0 0 60px rgba(212,175,55,0.2); }
+    }
+
+    .animate-1 { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+    .animate-2 { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards; opacity: 0; }
+    .animate-3 { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards; opacity: 0; }
+    .animate-4 { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards; opacity: 0; }
+
+    .reveal {
+      opacity: 0; transform: translateY(30px) scale(0.98);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* Header */
+    header.site {
+      background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      position: sticky; top: 0; z-index: 60;
+    }
+    header.site .wrap {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1.1rem; padding-bottom: 1.1rem; gap: 1.5rem;
+    }
+    .logo { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 500; flex-shrink: 0; letter-spacing: -0.5px;}
+    .logo .dot { color: var(--gold); }
+    
+    nav.main { display: flex; gap: 1.8rem; align-items: center; }
+    nav.main a {
+      font-size: 0.92rem; color: var(--muted); font-weight: 500;
+      padding-bottom: 3px; border-bottom: 2px solid transparent;
+      transition: color 0.3s ease, border-color 0.3s ease;
+    }
+    nav.main a:hover, nav.main a.current { color: var(--ink); border-color: var(--gold); }
+
+    /* Floating Action Buttons */
+    .fab-container {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 99;
+      display: flex; flex-direction: column; gap: 1rem; align-items: flex-end;
+    }
+    .fab-btn {
+      background: var(--gold); color: #000; font-weight: 600; font-size: 0.95rem;
+      padding: 0.8rem 1.4rem; border-radius: 30px; box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease; text-decoration: none; border: none; outline: none;
+    }
+    .fab-btn:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.5); color: #000; }
+    
+    .scroll-top {
+      width: 45px; height: 45px; padding: 0; border-radius: 50%; background: var(--bg-elev-2); 
+      color: var(--gold); border: 1px solid var(--line-strong);
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .scroll-top.visible { opacity: 1; pointer-events: auto; }
+    .scroll-top:hover { background: var(--line-strong); transform: translateY(-3px); }
+
+    /* Chatbot Widget */
+    .chat-widget {
+      position: absolute; bottom: 70px; right: 0; width: 340px; 
+      background: rgba(20, 20, 23, 0.95); backdrop-filter: blur(20px);
+      border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 12px;
+      display: flex; flex-direction: column; z-index: 100;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.15);
+      opacity: 0; pointer-events: none; transform: translateY(20px) scale(0.95);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden;
+    }
+    .chat-widget.open { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+    .chat-header {
+      padding: 1rem; border-bottom: 1px solid var(--line-strong); background: rgba(0,0,0,0.2);
+      display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--gold-soft);
+    }
+    .chat-close { cursor: pointer; color: var(--muted); font-size: 1.4rem; line-height: 1; transition: color 0.2s; }
+    .chat-close:hover { color: var(--ink); }
+    .chat-body { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; height: 320px; scroll-behavior: smooth; }
+    .chat-msg { max-width: 85%; padding: 0.7rem 1rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.4; word-wrap: break-word;}
+    .chat-msg.bot { background: var(--bg-elev-2); color: var(--ink); align-self: flex-start; border-bottom-left-radius: 2px;}
+    .chat-msg.user { background: rgba(212, 175, 55, 0.15); color: var(--gold-soft); border: 1px solid rgba(212,175,55,0.3); align-self: flex-end; border-bottom-right-radius: 2px; }
+    .chat-input { padding: 0.8rem; border-top: 1px solid var(--line-strong); display: flex; gap: 0.5rem; background: rgba(0,0,0,0.3); }
+    .chat-input input { 
+      flex: 1; background: var(--bg-elev-2); border: 1px solid var(--line); border-radius: 20px; 
+      padding: 0.6rem 1rem; outline: none; color: var(--ink); font-size: 0.9rem; transition: border 0.2s;
+    }
+    .chat-input input:focus { border-color: var(--gold-soft); }
+    .chat-input button {
+      background: var(--gold); border: none; color: #000; border-radius: 50%; width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;
+    }
+    .chat-input button:hover { transform: scale(1.1); background: var(--gold-soft); }
+
+    /* Hero */
+    .hero-band { 
+      padding: 8rem 0 6rem 0; position: relative; overflow: hidden; 
+      background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.1), transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(122, 156, 134, 0.1), transparent 40%);
+    }
+    .hero-band::after {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 0%, var(--bg) 100%); pointer-events: none;
+    }
+    .hero-band .wrap { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; z-index: 2; }
+    .kicker { 
+      color: var(--gold-soft); font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; 
+      text-transform: uppercase; letter-spacing: 2px; border: 1px solid var(--gold-glow); 
+      padding: 0.4rem 1rem; border-radius: 20px; background: rgba(212, 175, 55, 0.05);
+    }
+    .hero-band h1 { font-size: clamp(2.8rem, 5vw, 4.8rem); line-height: 1.1; max-width: 22ch; margin-bottom: 1.4rem; letter-spacing: -1px;}
+    .hero-band p.lead { color: var(--muted); font-size: 1.2rem; max-width: 52ch; line-height: 1.6; margin: 0 auto; }
+
+    /* Search Container & Live Dropdown */
+    .search-container {
+      margin-top: 2.8rem;
+      position: relative;
+      width: 100%;
+      max-width: 650px;
+      z-index: 50;
+    }
+    .search-box {
+      display: flex; gap: 0.5rem; width: 100%;
+      border: 1px solid rgba(212, 175, 55, 0.4); background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(10px);
+      border-radius: 12px; overflow: hidden; padding: 0.5rem;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 20px rgba(212, 175, 55, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .search-box:focus-within {
+      transform: translateY(-2px); border-color: var(--gold);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px rgba(212, 175, 55, 0.2);
+    }
+    .search-box input {
+      flex: 1; background: transparent; border: none; outline: none;
+      padding: 1rem 1.2rem; color: var(--ink); font-size: 1.1rem;
+    }
+    .search-box input::placeholder { color: var(--muted-2); }
+    .search-box button {
+      background: var(--gold); color: #000; border: none; border-radius: 8px;
+      font-weight: 700; padding: 0 2.5rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+    .search-box button:hover { background: var(--gold-soft); transform: scale(1.02); box-shadow: 0 4px 15px rgba(212,175,55,0.4); }
+
+    .search-dropdown {
+      position: absolute; top: calc(100% + 10px); left: 0; right: 0;
+      background: rgba(24, 24, 27, 0.95); backdrop-filter: blur(10px);
+      border: 1px solid var(--gold-glow); border-radius: 12px;
+      overflow: hidden; display: none; flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: left;
+    }
+    .search-dropdown.active { display: flex; animation: slideUpFade 0.3s ease forwards; }
+    .search-result-item {
+      padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: background 0.2s;
+    }
+    .search-result-item:hover { background: rgba(212,175,55,0.1); }
+    .search-result-item:last-child { border-bottom: none; }
+    .sr-title { font-weight: 600; font-size: 1.05rem; }
+    .sr-meta { font-size: 0.85rem; color: var(--muted); }
+
+    /* Trusted By Section */
+    .trusted-by { margin-top: 4rem; border-top: 1px solid var(--line); padding-top: 2rem; width: 100%; max-width: 800px; text-align: center; }
+    .trusted-by p { font-size: 0.8rem; color: var(--muted-2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem; }
+    .trusted-logos { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+    .trusted-logos a { 
+      font-weight: 700; font-size: 1.2rem; color: var(--muted); font-family: 'Inter', sans-serif; 
+      letter-spacing: -0.5px; opacity: 0.6; transition: opacity 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    }
+    .trusted-logos a:hover { opacity: 1; color: var(--gold-soft); transform: translateY(-2px); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      background: var(--gold); color: #000; font-weight: 600; font-size: 0.95rem; 
+      padding: 0.85rem 1.8rem; border: 1px solid var(--gold); border-radius: 6px; 
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-align: center; position: relative; overflow: hidden;
+      cursor: pointer; text-decoration: none; font-family: inherit; outline: none;
+    }
+    .btn::after {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: linear-gradient(to bottom right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+      transform: rotate(45deg) translateY(-100%); transition: all 0.6s ease;
+    }
+    .btn.glow { animation: pulseBtn 2s infinite; }
+    .btn.lg { padding: 1rem 2.5rem; font-size: 1.05rem; }
+    .btn:hover::after { transform: rotate(45deg) translateY(100%); }
+    .btn:hover { background: transparent; color: var(--gold); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4); }
+    .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-strong); box-shadow: none; }
+    .btn.ghost:hover { border-color: var(--gold-soft); color: var(--gold-soft); transform: translateY(-3px); background: rgba(255,255,255,0.03); }
+    .btn.block { width: 100%; box-sizing: border-box; }
+    .btn.sm { padding: 0.6rem 1.1rem; font-size: 0.88rem; }
+
+    /* Typographic Marquee */
+    .marquee-section { padding: 2rem 0; background: var(--bg-elev); border-bottom: 1px solid var(--line); border-top: 1px solid var(--line); overflow: hidden; position: relative; }
+    .marquee-wrapper { width: 100%; overflow: hidden; white-space: nowrap; position: relative; display: flex; align-items: center;}
+    .marquee-inner { display: inline-block; animation: marqueeText 30s linear infinite; font-family: 'Fraunces', serif; font-size: 1.8rem; color: var(--muted); }
+    .marquee-inner span { margin: 0 2rem; display: inline-flex; align-items: center; gap: 2rem;}
+    .marquee-inner span::after { content: "✦"; color: var(--gold-soft); font-size: 1rem;}
+
+    /* Featured Spotlight Section */
+    .spotlight-wrapper { padding: 6rem 0; background: radial-gradient(circle at center, rgba(212,175,55,0.05) 0%, transparent 60%); position: relative; perspective: 1000px; }
+    .spotlight-card {
+      position: relative; background: rgba(15,15,20,0.9); border-radius: 24px; padding: 4px;
+      background-clip: padding-box; animation: extremeFloat 8s ease-in-out infinite, hyperPulse 4s ease-in-out infinite;
+      transform-style: preserve-3d; max-width: 950px; margin: 0 auto; z-index: 10;
+    }
+    .spotlight-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: 24px;
+      background: linear-gradient(90deg, #D4AF37, #f472b6, #60a5fa, #4ade80, #D4AF37);
+      background-size: 200% 100%; animation: rainbowBorder 4s linear infinite; z-index: -1;
+    }
+    .spotlight-inner {
+      background: var(--bg-elev-2); border-radius: 20px; padding: 3.5rem; display: flex; gap: 3rem;
+      align-items: center; backdrop-filter: blur(20px); justify-content: space-between;
+    }
+    @media(max-width:768px){ .spotlight-inner { flex-direction:column; text-align:center; padding: 2.5rem;} }
+    .spotlight-badge {
+      display: inline-block; padding: 0.5rem 1rem; background: var(--gold); color: #000; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 2px; border-radius: 30px; margin-bottom: 1.5rem; animation: pulseBtn 2s infinite; font-size: 0.85rem;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+      padding: 1.5rem; border: 1px solid var(--line); background: var(--bg-elev);
+      border-radius: 6px; margin-bottom: 2.5rem;
+    }
+    .filter-bar input[type=text], .filter-bar select {
+      background: var(--bg); border: 1px solid var(--line-strong); color: var(--ink);
+      padding: 0.7rem 1rem; font-size: 0.92rem; outline: none; border-radius: 4px;
+    }
+    .filter-bar input[type=text]:focus, .filter-bar select:focus { border-color: var(--gold); }
+    .filter-bar input[type=text] { min-width: 200px; flex: 1; }
+    .filter-bar .count { font-size: 0.85rem; color: var(--muted-2); margin-left: auto; font-weight: 500;}
+    .filter-bar .clear { font-size: 0.85rem; color: var(--gold-soft); padding-bottom: 2px; border-bottom: 1px solid transparent; cursor: pointer; }
+    .filter-bar .clear:hover { border-color: var(--gold-soft); }
+
+    section.block { padding: 5rem 0; }
+    section.block h2 { font-size: clamp(1.8rem, 2.8vw, 2.4rem); margin-bottom: 0.4rem; }
+    section.block p.sub { color: var(--muted); margin-bottom: 2.5rem; max-width: 56ch; font-size: 1.05rem; }
+    .block-head-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem; }
+
+    /* Premium Abstract Event Cards */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
+    .card {
+      position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+      display: flex; flex-direction: column; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      background: var(--bg-elev);
+    }
+    .card:hover { 
+      border-color: var(--gold); transform: translateY(-8px); 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(212, 175, 55, 0.15); z-index: 2;
+    }
+    
+    .card-art {
+      height: 160px; width: 100%; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      border-bottom: 1px solid var(--line);
+    }
+    .card-art::before {
+      content: ''; position: absolute; inset: -50%; background-size: 200% 200%;
+      animation: ambientPan 10s ease-in-out infinite alternate; z-index: 0;
+    }
+    .card-icon {
+      position: relative; z-index: 2; width: 64px; height: 64px; 
+      background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: transform 0.4s ease;
+    }
+    .card:hover .card-icon { transform: scale(1.1) rotate(5deg); border-color: var(--gold-soft); color: var(--gold-soft);}
+    
+    .bookmark-icon {
+      position: absolute; top: 1rem; right: 1rem; z-index: 3;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: 1px solid var(--line-strong);
+      border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      color: var(--ink); cursor: pointer; transition: all 0.2s ease;
+    }
+    .bookmark-icon:hover { color: var(--gold); background: var(--bg-elev); transform: scale(1.1); }
+    .bookmark-icon.saved { color: var(--gold-soft); border-color: var(--gold-soft); background: rgba(212, 175, 55, 0.2); }
+    
+    .card-content { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; z-index: 2; background: var(--bg-elev);}
+    .tag {
+      display: inline-block; font-size: 0.72rem; font-weight: 700; color: #000; 
+      background: var(--gold); padding: 0.3rem 0.8rem; width: fit-content; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    
+    .card h3 { font-size: 1.4rem; line-height: 1.25; margin: 0.8rem 0 0.5rem 0;}
+    .card .meta { font-size: 0.9rem; color: var(--muted); font-weight: 500;}
+    .card .meta-extra { font-size: 0.85rem; color: var(--muted-2); margin-top: 0.2rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--line); }
+    .card .tagline { font-size: 0.95rem; color: var(--ink); opacity: 0.85; flex-grow: 1; line-height: 1.6; margin-top: 0.8rem;}
+    .card-actions { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
+
+    /* Event Detail Page - INTERACTIVE VENUE MAP HUD */
+    .detail-hero { padding: 4rem 0 3rem 0; border-bottom: 1px solid var(--line); background: radial-gradient(circle at 50% 100%, rgba(212, 175, 55, 0.05), transparent 70%); }
+    .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .breadcrumb a:hover { color: var(--gold-soft); }
+    .detail-hero .meta-row { display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 1.8rem; font-size: 0.96rem; color: var(--muted); }
+    .detail-hero .actions { display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; align-items: center;}
+    
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;
+      margin: 3rem 0 2rem 0; padding: 2rem; border: 1px solid var(--line-strong); border-radius: 8px;
+      background: var(--bg-elev-2);
+    }
+    .metric-box { display: flex; flex-direction: column; gap: 0.4rem; }
+    .metric-box .m-val { font-family: 'Fraunces', serif; font-size: 2.2rem; color: var(--gold-soft); line-height: 1; }
+    .metric-box .m-label { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+
+    /* CRAZY LOCATION VENUE HUD */
+    .venue-hud {
+      position: relative; margin: 3rem 0; border-radius: 16px; overflow: hidden;
+      background: var(--bg-elev-2); border: 1px solid rgba(212, 175, 55, 0.4);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 3rem; box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 20px rgba(212, 175, 55, 0.1);
+    }
+    .venue-hud-bg {
+      position: absolute; inset: 0; background-size: 60px 60px;
+      background-image: linear-gradient(rgba(212,175,55,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.1) 1px, transparent 1px);
+      animation: mapPan 15s linear infinite; opacity: 0.8; z-index: 1;
+    }
+    .radar-sweep {
+      position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: conic-gradient(from 0deg, transparent 70deg, rgba(212,175,55,0.2) 120deg, transparent 120deg);
+      animation: radarSweep 4s linear infinite; z-index: 1; pointer-events: none; transform-origin: center;
+    }
+    .venue-content {
+      position: relative; z-index: 2; display: flex; width: 100%; justify-content: space-between; align-items: center;
+    }
+    @media(max-width: 768px) {
+      .venue-hud { padding: 2rem; }
+      .venue-content { flex-direction: column; gap: 2rem; text-align: center; }
+    }
+
+    /* Features Grid */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 3rem 0; }
+    .feature-card {
+      background: var(--bg-elev); border: 1px solid var(--line); border-radius: 12px; padding: 2rem;
+      display: flex; flex-direction: column; gap: 1rem; transition: transform 0.3s, border-color 0.3s;
+    }
+    .feature-card:hover { transform: translateY(-5px); border-color: var(--gold-soft); }
+    .feature-icon { width: 48px; height: 48px; color: var(--gold-soft); background: rgba(212,175,55,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;}
+    .feature-card h3 { font-size: 1.2rem; font-family: 'Inter', sans-serif; font-weight: 600; margin:0;}
+    .feature-card p { font-size: 0.95rem; color: var(--muted); margin: 0; line-height: 1.5;}
+
+    .detail-body { display: grid; grid-template-columns: 1.8fr 1fr; gap: 4rem; padding: 1rem 0 4rem 0; }
+    @media (max-width:820px){ .detail-body{ grid-template-columns: 1fr; } }
+    .detail-body h2 { font-size: 1.6rem; margin-bottom: 1.2rem; margin-top: 3rem; color: var(--gold-soft); border-bottom: 1px solid var(--line); padding-bottom: 0.5rem;}
+    .detail-body h2:first-child { margin-top: 0; }
+    .detail-body p { color: var(--muted); max-width: 68ch; font-size: 1.05rem; margin-bottom: 1.2rem;}
+
+    .sidebar-box { border: 1px solid var(--line); padding: 1.8rem; margin-bottom: 1.5rem; background: var(--bg-elev); border-radius: 6px; }
+    .sidebar-box h3 { font-size: 1rem; margin-bottom: 1.2rem; color: var(--ink); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
+    .fact { padding: 0.8rem 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;}
+    .fact:last-child { border-bottom: none; padding-bottom: 0;}
+    .fact .f-label { font-size: 0.78rem; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.5px;}
+    .fact .f-val { font-size: 0.96rem; color: var(--ink); font-weight: 500; text-align: right; max-width: 60%;}
+
+    #app { min-height: 60vh; }
+    
+    /* Footer */
+    footer.site { border-top: 1px solid var(--line); padding: 4rem 0 2rem 0; margin-top: 2rem; background: var(--bg-elev-2); }
+    footer.site .fgrid { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 3rem; }
+    footer.site h4 { font-size: 0.85rem; color: var(--ink); margin-bottom: 1.2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+    footer.site ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+    footer.site a { font-size: 0.92rem; color: var(--muted); transition: color 0.2s; cursor: pointer; }
+    footer.site a:hover { color: var(--gold-soft); }
+    .disclaimer { font-size: 0.82rem; color: var(--muted-2); border-top: 1px solid var(--line); padding-top: 1.5rem; margin-top: 3.5rem; text-align: center;}
+  </style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a href="#/" class="logo">Delegate<span class="dot">.</span></a>
+    <nav class="main" id="mainNav">
+      <a href="#/" data-r="/">Home</a>
+      <a href="#/events" data-r="/events">Events</a>
+    </nav>
+  </div>
+</header>
+
+<div id="app"></div>
+
+<!-- Global Floating Action Buttons & Chatbot -->
+<div class="fab-container">
+  <div class="chat-widget" id="chatWidget">
+    <div class="chat-header">
+      <span>Delegate Support</span>
+      <span class="chat-close" onclick="toggleChat()" title="Close chat">✕</span>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <div class="chat-msg bot">Hi there! 👋 I'm the Delegate assistant. How can I help you find your next enterprise event?</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="handleChatKey(event)">
+      <button onclick="sendChatMessage()" title="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </div>
+  </div>
+
+  <button class="fab-btn scroll-top" id="scrollTopBtn" onclick="window.scrollTo(0,0)" title="Scroll to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+  <button class="fab-btn" onclick="toggleChat()" title="Contact Support">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    Support
+  </button>
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <div class="logo" style="margin-bottom:0.9rem;">Delegate<span class="dot">.</span></div>
+        <p style="font-size: 0.95rem; color: var(--muted); max-width: 40ch; line-height: 1.6;">Delegate helps you find the enterprise technology events actually worth clearing your calendar for.</p>
+      </div>
+      <div>
+        <h4>Browse</h4>
+        <ul>
+          <li><a href="#/events">All events</a></li>
+          <li><a href="#/">Home</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Focus areas</h4>
+        <ul id="footerCats">
+           <li><a href="#/events?cat=AI%20%26%20Data">AI & Data</a></li>
+           <li><a href="#/events?cat=Cloud%20%26%20Telecom">Cloud & Telecom</a></li>
+           <li><a href="#/events?cat=Tech%20%26%20Innovation">Tech & Innovation</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li><a onclick="toggleChat()">Help Center</a></li>
+          <li><a onclick="toggleChat()">Contact Us</a></li>
+        </ul>
+      </div>
+      </div>
+  </div>
+</footer>
+
+<script>
+/* MOCK DATA & HELPERS */
+function hashStr(s) { let h=0; for(let i=0;i<s.length;i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0; return Math.abs(h); }
+
+const RAW_EVENTS = [
+  { slug:"bengaluru-tech-summit-2026", title:"Bengaluru Tech Summit 2026", category:"Tech & Innovation", date:"17 Nov 2026", dateISO:"2026-11-17", city:"Bangalore, India", venue:"Bangalore Palace Grounds", url:"https://www.bengalurutechsummit.com/", tagline:"The ultimate gathering for businesses leveraging technology.", price:"From ₹5,000", duration:"3 Days" },
+  { slug:"open-source-india-2026", title:"Open Source India 2026", category:"Tech & Innovation", date:"07 Oct 2026", dateISO:"2026-10-07", city:"Bangalore, India", venue:"NIMHANS Convention Center", url:"https://www.opensourceindia.in/", tagline:"Asia's premier enterprise open source conference.", price:"From ₹2,000", duration:"2 Days" },
+  { slug:"ad-tech-new-delhi-2027", title:"Ad:Tech New Delhi 2027", category:"MarTech", date:"17 Mar 2027", dateISO:"2027-03-17", city:"New Delhi, India", venue:"Yashobhoomi Convention Centre", url:"https://newdelhi.ad-tech.com/", tagline:"Unparalleled marketplace for marketing and technology.", price:"From ₹12,000", duration:"2 Days" },
+  { slug:"manufacturing-it-summit-2027", title:"Manufacturing IT Summit", category:"Manufacturing", date:"17 Jun 2027", dateISO:"2027-06-17", city:"Mumbai, India", venue:"TBA, Mumbai", url:"https://manufacturingitsummit.com/india/", tagline:"Scaling Digital Manufacturing: From Pilot Projects to Profitable Plants.", price:"Invite Only", duration:"1 Day" },
+  { slug:"gitex-global-2026", title:"GITEX Global 2026", category:"Tech & Innovation", date:"08 Dec 2026", dateISO:"2026-12-08", city:"Dubai, UAE", venue:"Dubai World Trade Centre", url:"https://www.gitex.com/", tagline:"World's largest tech show and AI summit.", price:"From $150", duration:"4 Days" },
+  { slug:"connectechasia-2027", title:"ConnecTechAsia 2027", category:"Cloud & Telecom", date:"26 May 2027", dateISO:"2027-05-26", city:"Singapore", venue:"Singapore Expo", url:"https://www.connectechasia.com/", tagline:"Driving digital transformation in Asia.", price:"From $300", duration:"3 Days" },
+  { slug:"blockchain-life-2026", title:"Blockchain Life 2026", category:"Crypto & Web3", date:"01 Dec 2026", dateISO:"2026-12-01", city:"Dubai, UAE", venue:"Festival Arena", url:"https://blockchain-life.com/", tagline:"The global forum on blockchain and crypto.", price:"From $199", duration:"2 Days" },
+  { slug:"ai-world-congress-2026", title:"AI World Congress 2026", category:"AI & Data", date:"25 Nov 2026", dateISO:"2026-11-25", city:"London, UK", venue:"High Street Kensington", url:"https://aiconference.london/", tagline:"Europe's premier AI business conference.", price:"£495", duration:"2 Days" },
+  { slug:"web-summit-2026", title:"Web Summit 2026", category:"Tech & Innovation", date:"03 Nov 2026", dateISO:"2026-11-03", city:"Lisbon, Portugal", venue:"Altice Arena", url:"https://websummit.com/", tagline:"Where the tech world meets.", price:"From €950", duration:"4 Days" },
+  { slug:"neurips-2026", title:"NeurIPS 2026", category:"AI & Data", date:"01 Dec 2026", dateISO:"2026-12-01", city:"Vancouver, Canada", venue:"Vancouver Convention Centre", url:"https://nips.cc/", tagline:"The world's most prestigious AI research conference.", price:"From $600", duration:"7 Days" },
+  { slug:"ai-finance-london-2026", title:"AI in Finance Summit London", category:"FinTech", date:"15 Sep 2026", dateISO:"2026-09-15", city:"London, UK", venue:"Cavendish Venues", url:"https://www.re-work.co/events/ai-in-finance-summit-london", tagline:"Discover AI applications in the financial sector.", price:"£695", duration:"1 Day" },
+  { slug:"middle-east-banking-2026", title:"17th Middle East Banking Summit", category:"FinTech", date:"16 Sep 2026", dateISO:"2026-09-16", city:"Dubai, UAE", venue:"Jumeirah Emirates Towers", url:"https://www.bankingsummit.com/", tagline:"Innovating the future of banking in the Middle East.", price:"Invite Only", duration:"2 Days" }
+];
+
+/* --- CATEGORY ICONS & GRADIENT ART --- */
+const CAT_ICONS = {
+  "AI & Data": `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`,
+  "Security": `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+  "Cloud & Telecom": `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>`,
+  "MarTech": `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`,
+  "Tech & Innovation": `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
+  "Crypto & Web3": `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>`,
+  "FinTech": `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`,
+  "Manufacturing": `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>`
+};
+const FALLBACK_ICON = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>`;
+
+const COLORS = [
+  { c1: "#D4AF37", c2: "#8a661c" }, // Gold
+  { c1: "#4ade80", c2: "#14532d" }, // Green
+  { c1: "#60a5fa", c2: "#1e3a8a" }, // Blue
+  { c1: "#c084fc", c2: "#581c87" }, // Purple
+  { c1: "#f472b6", c2: "#831843" }  // Pink
+];
+
+const EVENTS = RAW_EVENTS.map(ev => {
+  let h = hashStr(ev.slug);
+  let colorPair = COLORS[h % COLORS.length];
+  return {
+    ...ev,
+    applicants: (h % 900) + 120,
+    capacity: (h % 150) + 20, 
+    distance: (h % 1500) + 15, 
+    regStatus: (h % 4) === 0 ? "Closing Soon" : "Open",
+    daysLeft: (h % 45) + 3,
+    icon: CAT_ICONS[ev.category] || FALLBACK_ICON,
+    gradColor1: colorPair.c1,
+    gradColor2: colorPair.c2
+  };
+});
+
+const CATEGORIES = [...new Set(EVENTS.map(e=>e.category))].sort();
+
+/* --- GLOBAL LISTENERS --- */
+// Close the search dropdown if clicking outside
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('searchResults');
+  if(dropdown && !e.target.closest('.search-container')) {
+    dropdown.classList.remove('active');
+  }
+});
+
+/* --- INTERACTIVE BUTTON FUNCTIONS --- */
+
+function downloadICS(title, dateISO, venue, url) {
+  const startDate = dateISO.replace(/-/g, "");
+  const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Delegate//Event Calendar//EN\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:${startDate}\nSUMMARY:${title}\nLOCATION:${venue}\nURL:${url}\nDESCRIPTION:Join us for ${title}. Find more details at ${url}\nEND:VEVENT\nEND:VCALENDAR`;
+
+  const blob = new Blob([icsContent], { type: 'text/calendar' });
+  const downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = `${title.replace(/\s+/g, '_')}.ics`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}
+
+function shareEvent(btnElement) {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const originalText = btnElement.innerHTML;
+    btnElement.innerHTML = '✅ Copied!';
+    btnElement.style.borderColor = 'var(--gold-soft)';
+    btnElement.style.color = 'var(--gold-soft)';
+    setTimeout(() => {
+      btnElement.innerHTML = originalText;
+      btnElement.style.borderColor = '';
+      btnElement.style.color = '';
+    }, 2000);
+  });
+}
+
+function downloadBrochure(title) {
+  const content = `Event Brochure for ${title}\n\nThank you for your interest! In a production environment, this would be a full PDF brochure.`;
+  const blob = new Blob([content], { type: 'text/plain' });
+  const downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = `${title.replace(/\s+/g, '_')}_Brochure.txt`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+}
+
+function toggleBookmark(btn) {
+  btn.classList.toggle('saved');
+  if (btn.classList.contains('saved')) {
+    btn.innerHTML = '♥';
+  } else {
+    btn.innerHTML = '♡';
+  }
+}
+
+/* --- CHATBOT LOGIC --- */
+function toggleChat() {
+  const chat = document.getElementById('chatWidget');
+  chat.classList.toggle('open');
+  if (chat.classList.contains('open')) {
+    document.getElementById('chatInput').focus();
+  }
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter') sendChatMessage();
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  appendMsg(text, 'user');
+  input.value = '';
+  
+  setTimeout(() => {
+    const botReply = getBotResponse(text.toLowerCase());
+    appendMsg(botReply, 'bot');
+  }, 700);
+}
+
+function appendMsg(text, sender) {
+  const body = document.getElementById('chatBody');
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `chat-msg ${sender}`;
+  msgDiv.textContent = text;
+  body.appendChild(msgDiv);
+  body.scrollTop = body.scrollHeight; 
+}
+
+function getBotResponse(text) {
+  if(text.includes('register') || text.includes('ticket')) return "You can register for any event by clicking the 'Register on Official Site' button on the event card.";
+  if(text.includes('free') || text.includes('cost') || text.includes('price')) return "Event pricing varies and is set by the organizer. You can see the starting price directly on each event card.";
+  if(text.includes('hi') || text.includes('hello')) return "Hello! How can I help you find the perfect enterprise event today?";
+  if(text.includes('contact') || text.includes('email') || text.includes('help')) return "I can connect you to our support team! Feel free to email us at support@delegate.demo.";
+  return "Thanks for reaching out! I've noted your question. A human agent will review this shortly. In the meantime, try browsing our event calendar!";
+}
+
+/* --- RENDER LOGIC --- */
+
+function eventCard(ev){
+  let badgeColor = ev.regStatus === "Closing Soon" ? "#e63946" : "var(--sage-soft)";
+  
+  const artStyle = `
+    <style>
+      .art-${ev.slug}::before {
+        background-image: 
+          radial-gradient(circle at 20% 20%, ${ev.gradColor1}40 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, ${ev.gradColor2}60 0%, transparent 50%);
+      }
+    </style>
+  `;
+
+  return `
+    ${artStyle}
+    <div class="card reveal">
+      <div class="card-art art-${ev.slug}">
+        <div class="bookmark-icon" title="Save Event" onclick="toggleBookmark(this)">♡</div>
+        <div class="card-icon" style="color: ${ev.gradColor1}; border-color: ${ev.gradColor1}40;">
+          ${ev.icon}
+        </div>
+      </div>
+      <div class="card-content">
+        <div style="font-size:0.8rem; color:${badgeColor}; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">● ${ev.regStatus}</div>
+        <span class="tag" style="background: ${ev.gradColor1}20; color: ${ev.gradColor1}; border: 1px solid ${ev.gradColor1}40;">${ev.category}</span>
+        <h3>${ev.title}</h3>
+        <div class="meta">${ev.date} &nbsp;·&nbsp; ${ev.city}</div>
+        <div class="meta-extra">
+          👥 ${ev.applicants} Applied &nbsp;|&nbsp; 🎟 ${ev.price}
+        </div>
+        <div class="tagline">${ev.tagline}</div>
+        <div class="card-actions">
+          <a href="#/events/${ev.slug}" class="btn ghost sm block" style="flex:1;">Details</a>
+          <a href="${ev.url}" target="_blank" class="btn sm block" style="flex:1;">Register</a>
+        </div>
+      </div>
+    </div>`;
+}
+
+function pageHome(){
+  const nextThree = EVENTS.slice(0,6);
+  // Using NeurIPS as the featured event for the animation
+  const featured = EVENTS.find(e => e.slug === "neurips-2026") || EVENTS[0];
+
+  return `
+    <section class="hero-band">
+      <div class="wrap">
+        <div class="kicker animate-1">Welcome to Delegate</div>
+        <h1 class="animate-2">Find the enterprise event worth your time.</h1>
+        <p class="lead animate-3">Discover conferences, summits, and awards across the globe. We surface real-time metrics so you know exactly what you're walking into.</p>
+        
+        <!-- Live Search Container -->
+        <div class="search-container animate-4">
+          <form class="search-box" style="margin-top:0;" onsubmit="event.preventDefault(); const q = this.querySelector('input').value; location.hash = q ? '/events?q=' + encodeURIComponent(q) : '/events';">
+            <input type="text" id="homeSearch" placeholder="Search by topic, city, or event name..." autocomplete="off">
+            <button type="submit">SEARCH</button>
+          </form>
+          <div id="searchResults" class="search-dropdown"></div>
+        </div>
+
+        <div class="trusted-by animate-4">
+          <p>Leaders from top enterprises attend our listed events</p>
+          <div class="trusted-logos">
+            <a href="https://www.microsoft.com" target="_blank">Microsoft</a>
+            <a href="https://www.google.com" target="_blank">Google</a>
+            <a href="https://www.amazon.com" target="_blank">Amazon</a>
+            <a href="https://www.meta.com" target="_blank">Meta</a>
+            <a href="https://www.ibm.com" target="_blank">IBM</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typographic Marquee -->
+    <section class="marquee-section">
+      <div class="marquee-wrapper">
+        <div class="marquee-inner">
+          <span>✦ Enterprise AI</span>
+          <span>✦ Cloud Infrastructure</span>
+          <span>✦ Cybersecurity</span>
+          <span>✦ Web3 & Crypto</span>
+          <span>✦ Marketing Tech</span>
+          <span>✦ FinTech Solutions</span>
+          
+          <span>✦ Enterprise AI</span>
+          <span>✦ Cloud Infrastructure</span>
+          <span>✦ Cybersecurity</span>
+          <span>✦ Web3 & Crypto</span>
+          <span>✦ Marketing Tech</span>
+          <span>✦ FinTech Solutions</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW FEATURE: Animated Featured Spotlight -->
+    <section class="spotlight-wrapper">
+      <div class="wrap">
+        <div class="spotlight-card">
+          <div class="spotlight-inner">
+            <div style="flex:1; text-align: left;">
+              <div class="spotlight-badge">🔥 Featured Spotlight</div>
+              <h2 style="font-size:2.8rem; margin-bottom:1rem; font-family:'Fraunces', serif;">${featured.title}</h2>
+              <p style="color:var(--muted); font-size:1.1rem; line-height:1.6; margin-bottom:2rem; max-width: 40ch;">${featured.tagline}</p>
+              <div style="display:flex; flex-wrap: wrap; gap:1.5rem; color:var(--muted); font-size:0.95rem; margin-bottom:2.5rem;">
+                <span style="font-weight: 500; color:var(--ink);">📅 ${featured.date}</span>
+                <span style="font-weight: 500; color:var(--ink);">📍 ${featured.city}</span>
+                <span style="font-weight: 500; color:var(--gold-soft);">🎟 ${featured.price}</span>
+              </div>
+              <a href="#/events/${featured.slug}" class="btn lg glow" style="box-shadow: 0 0 20px rgba(212,175,55,0.4); border:none;">Secure Your Spot</a>
+            </div>
+            <div style="width:220px; height:220px; background:rgba(0,0,0,0.5); border:2px solid var(--gold-soft); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--gold-soft); transform: rotate(-5deg); box-shadow: 0 0 40px var(--gold-glow); flex-shrink: 0;">
+              <div style="transform: scale(2.5);">${featured.icon}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" style="background:var(--bg-elev-2); border-bottom:1px solid var(--line);">
+      <div class="wrap">
+        <div class="block-head-row reveal">
+          <div><h2>Trending Events</h2><p class="sub">Handpicked conferences coming up soon.</p></div>
+          <a class="btn ghost" href="#/events">Explore Calendar</a>
+        </div>
+        <div class="grid">${nextThree.map(eventCard).join("")}</div>
+      </div>
+    </section>
+  `;
+}
+
+function pageEvents(){
+  const params = new URLSearchParams(location.hash.split("?")[1] || "");
+  const q = (params.get("q") || "").toLowerCase();
+  const cat = params.get("cat") || "";
+  
+  let list = EVENTS.filter(ev => {
+    let mQ = !q || (ev.title+ev.tagline+ev.category+ev.city).toLowerCase().includes(q);
+    let mCat = !cat || ev.category === cat;
+    return mQ && mCat;
+  });
+  list = list.sort((a,b)=>a.dateISO.localeCompare(b.dateISO));
+
+  return `
+    <section class="hero-band reveal" style="padding:5rem 0 4rem 0; text-align:left; align-items:flex-start; background:none;">
+      <div class="wrap" style="align-items:flex-start; text-align:left;">
+        <div class="kicker">Calendar</div>
+        <h1 style="max-width:none;">All Events</h1>
+        <p class="lead" style="margin:0;">Use advanced filters to find the perfect event for your team.</p>
+      </div>
+    </section>
+    
+    <section class="block" style="padding-top:0;">
+      <div class="wrap">
+        <div class="filter-bar reveal">
+          <input type="text" id="fq" placeholder="Search events..." value="${q}">
+          <select id="fcat">
+            <option value="">All Topics</option>
+            ${CATEGORIES.map(c=>`<option value="${c}" ${c===cat?'selected':''}>${c}</option>`).join("")}
+          </select>
+          <span class="count" id="fcount">${list.length} result${list.length===1?'':'s'}</span>
+          <a class="clear" onclick="location.hash='/events'">Clear all</a>
+        </div>
+        <div class="grid" id="eventsGrid">
+          ${list.map(eventCard).join("") || '<div class="empty-state reveal" style="grid-column:1/-1; text-align:center; padding:4rem;">No events match those filters. Try broadening your search.</div>'}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function pageEvent(slug){
+  const ev = EVENTS.find(e => e.slug === slug);
+  if(!ev) return `<section class="block"><div class="wrap"><h2>Event not found</h2></div></section>`;
+  
+  // Create safe Google Maps Query String
+  const mapQuery = encodeURIComponent(`${ev.venue}, ${ev.city}`);
+  
+  return `
+    <section class="detail-hero reveal" style="background: radial-gradient(circle at 50% -20%, ${ev.gradColor1}20, transparent 70%);">
+      <div class="wrap">
+        <div class="breadcrumb"><a href="#/">Home</a> / <a href="#/events">Events</a> / ${ev.title}</div>
+        <span class="tag" style="background: ${ev.gradColor1}20; color: ${ev.gradColor1}; border: 1px solid ${ev.gradColor1}40;">${ev.category}</span>
+        <h1 style="margin-top:1.2rem; max-width:26ch;">${ev.title}</h1>
+        <p class="lead" style="max-width:60ch;">${ev.tagline}</p>
+        
+        <div class="actions">
+          <a href="${ev.url}" target="_blank" class="btn lg glow">Register on Official Site</a>
+          <button class="btn ghost" onclick="downloadICS('${ev.title.replace(/'/g, "\\'")}', '${ev.dateISO}', '${ev.venue.replace(/'/g, "\\'")}', '${ev.url}')">📅 Add to Calendar</button>
+          <button class="btn ghost" onclick="shareEvent(this)">🔗 Share Event</button>
+          <button class="btn ghost" onclick="downloadBrochure('${ev.title.replace(/'/g, "\\'")}')">📥 Download Brochure</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="metrics-grid reveal">
+        <div class="metric-box">
+          <div class="m-val">${ev.applicants}</div>
+          <div class="m-label">Total Applicants</div>
+        </div>
+        <div class="metric-box">
+          <div class="m-val">${ev.capacity}</div>
+          <div class="m-label">Seats Remaining</div>
+        </div>
+        <div class="metric-box">
+          <div class="m-val" style="color:${ev.regStatus === 'Closing Soon' ? '#e63946' : 'var(--gold-soft)'}">${ev.regStatus}</div>
+          <div class="m-label">Registration Status</div>
+        </div>
+        <div class="metric-box">
+          <div class="m-val">${ev.daysLeft}</div>
+          <div class="m-label">Days Left to Register</div>
+        </div>
+      </div>
+      
+      <!-- INTERACTIVE LOCATION HUD -->
+      <div class="venue-hud reveal">
+        <div class="venue-hud-bg"></div>
+        <div class="radar-sweep"></div>
+        <div class="venue-content">
+          <div style="display:flex; align-items:center; gap:1.5rem;">
+            <div style="width:60px; height:60px; background:rgba(212,175,55,0.1); border:1px solid var(--gold-soft); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.8rem; animation: pulseGlow 2s infinite;">📍</div>
+            <div style="text-align:left;">
+              <div style="color:var(--gold-soft); font-size:0.85rem; text-transform:uppercase; letter-spacing:1px; font-weight:700; margin-bottom:0.2rem;">Live Venue Location</div>
+              <h2 style="margin:0; font-size:1.8rem; line-height:1.2; border:none; padding:0; color:var(--ink);">${ev.venue}</h2>
+              <p style="margin:0.2rem 0 0 0; color:var(--muted);">${ev.city}</p>
+            </div>
+          </div>
+          <a href="https://www.google.com/maps/search/?api=1&query=${mapQuery}" target="_blank" class="btn lg glow" style="margin:0; box-shadow: 0 0 25px rgba(212,175,55,0.4);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+            Open in Google Maps
+          </a>
+        </div>
+      </div>
+
+      <!-- Features Grid -->
+      <div class="features-grid reveal">
+        <div class="feature-card">
+          <div class="feature-icon">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <div>
+            <h3>Global Networking</h3>
+            <p>Connect face-to-face with over ${ev.applicants}+ enterprise leaders and founders.</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </div>
+          <div>
+            <h3>Exclusive Insights</h3>
+            <p>Gain unfiltered knowledge from top-tier speakers driving innovation in ${ev.category}.</p>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          </div>
+          <div>
+            <h3>Actionable Strategies</h3>
+            <p>Leave with immediate toolkits and frameworks to scale your business.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <div class="main reveal">
+          <h2>Overview</h2>
+          <p>Join industry leaders at <strong>${ev.title}</strong> to explore cutting-edge solutions and networking opportunities. Experience deep-dive sessions focusing on the most critical challenges facing the enterprise today.</p>
+        </div>
+
+        <div class="side reveal">
+          <div class="sidebar-box">
+            <h3>Event Details</h3>
+            <div class="fact"><div class="f-label">Date</div><div class="f-val">${ev.date}</div></div>
+            <div class="fact"><div class="f-label">Duration</div><div class="f-val">${ev.duration}</div></div>
+            <div class="fact"><div class="f-label">Pricing</div><div class="f-val">${ev.price}</div></div>
+            <div class="fact"><div class="f-label">Location</div><div class="f-val">${ev.city}</div></div>
+            <div class="fact"><div class="f-label">Est. Distance</div><div class="f-val">~${ev.distance} km from you</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function bindAnimations() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target); 
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+function bindHomeSearch() {
+  const input = document.getElementById('homeSearch');
+  const dropdown = document.getElementById('searchResults');
+  if(!input || !dropdown) return;
+
+  input.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    if(!q) { 
+      dropdown.classList.remove('active'); 
+      return; 
+    }
+    
+    // Live filter top 5 results
+    const results = EVENTS.filter(ev => 
+      (ev.title+ev.tagline+ev.category+ev.city).toLowerCase().includes(q)
+    ).slice(0, 5);
+
+    if(results.length === 0) {
+      dropdown.innerHTML = '<div class="search-result-item"><span class="sr-meta">No matching events found...</span></div>';
+    } else {
+      dropdown.innerHTML = results.map(ev => `
+        <a href="#/events/${ev.slug}" class="search-result-item">
+          <div>
+            <div class="sr-title">${ev.title}</div>
+            <div class="sr-meta">${ev.category} • ${ev.city}</div>
+          </div>
+          <div class="sr-meta" style="color:var(--gold-soft)">${ev.date}</div>
+        </a>
+      `).join('');
+    }
+    dropdown.classList.add('active');
+  });
+}
+
+function bindFilterBar(){
+  const fq = document.getElementById("fq");
+  const fcat = document.getElementById("fcat");
+  const grid = document.getElementById("eventsGrid");
+  const countDisplay = document.getElementById("fcount");
+  if(!fq || !fcat || !grid) return;
+
+  function applyLiveFilter(){
+    const q = fq.value.toLowerCase();
+    const cat = fcat.value;
+    
+    // Filter array dynamically
+    let list = EVENTS.filter(ev => {
+      let mQ = !q || (ev.title+ev.tagline+ev.category+ev.city).toLowerCase().includes(q);
+      let mCat = !cat || ev.category === cat;
+      return mQ && mCat;
+    });
+    list = list.sort((a,b)=>a.dateISO.localeCompare(b.dateISO));
+    
+    // Update count UI
+    countDisplay.innerText = `${list.length} result${list.length===1?'':'s'}`;
+    
+    // Update Grid UI instantly without reloading the page
+    if(list.length === 0) {
+      grid.innerHTML = '<div class="empty-state reveal visible" style="grid-column:1/-1; text-align:center; padding:4rem; opacity:1; transform:none;">No events match those filters. Try broadening your search.</div>';
+    } else {
+      grid.innerHTML = list.map(eventCard).join("");
+      // Force instant visibility for dynamic cards so they don't get stuck hidden waiting for scroll
+      grid.querySelectorAll('.card.reveal').forEach(el => {
+        el.classList.add('visible');
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+    }
+
+    // Silently update URL Hash state so sharing links still works perfectly
+    const params = new URLSearchParams();
+    if(q) params.set("q", q);
+    if(cat) params.set("cat", cat);
+    const qs = params.toString();
+    const newUrl = window.location.pathname + "#/events" + (qs ? "?"+qs : "");
+    history.replaceState(null, "", newUrl);
+  }
+
+  // Bind live filtering to Input and Change events 
+  fcat.addEventListener("change", applyLiveFilter);
+  fq.addEventListener("input", applyLiveFilter);
+}
+
+// Scroll to Top Logic
+window.addEventListener('scroll', () => {
+  const scrollBtn = document.getElementById('scrollTopBtn');
+  if (window.scrollY > 400) {
+    scrollBtn.classList.add('visible');
+  } else {
+    scrollBtn.classList.remove('visible');
+  }
+});
+
+function render(){
+  const full = location.hash.replace(/^#/, "") || "/";
+  const path = full.split("?")[0];
+  const parts = path.split("/").filter(Boolean);
+  const app = document.getElementById("app");
+  
+  if(parts.length === 0) app.innerHTML = pageHome();
+  else if(parts[0] === "events" && parts.length === 1) app.innerHTML = pageEvents();
+  else if(parts[0] === "events" && parts[1]) app.innerHTML = pageEvent(parts[1]);
+  else app.innerHTML = pageHome();
+
+  window.scrollTo(0,0);
+  setTimeout(bindAnimations, 50);
+  bindHomeSearch();
+  bindFilterBar();
+}
+
+window.addEventListener("hashchange", render);
+render();
+</script>
+</body>
+</html>
